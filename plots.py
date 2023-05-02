@@ -23,8 +23,8 @@ def prepare_data():
         data[nhanes_data.TTG_KEY][(data[nhanes_data.TTG_KEY] != 1) & (data[nhanes_data.TTG_KEY] != 3) & (data[nhanes_data.TTG_KEY])] = 0
 
         # data[nhanes_data.CANCER][data[nhanes_data.CANCER] != 1] = 0
-        data[nhanes_data.GENDER] = data[nhanes_data.GENDER] - 1
-    X, y =  nhanes_data.get_xy_data(nhanes_data.BIOCHEM_SI + [nhanes_data.HEIGHT, nhanes_data.WEIGHT, nhanes_data.AGE, nhanes_data.GENDER, nhanes_data.RACE], key, modify=modify)
+        # data[nhanes_data.GENDER] = data[nhanes_data.GENDER] - 1
+    X, y =  nhanes_data.get_xy_data(nhanes_data.BIOCHEM_SI + [nhanes_data.HEIGHT, nhanes_data.WEIGHT], key, modify=modify)
     # | (y[main.TTG_KEY] == 1) | ((y[main.TTG_KEY] == 3) & (y[main.EMA_KEY] == 3))
     y = np.where((y[nhanes_data.EMA_KEY] == 1), 1, 0)
     y = np.ravel(y)
@@ -63,12 +63,12 @@ if __name__ == "__main__":
     n = len(ytest)
     print(f"test cases = {cases}, test n = {n}")
 
-    with open("LR_model_race.mdl", mode='rb') as file:
+    with open("LR_model_norace.mdl", mode='rb') as file:
         lr_model = pickle.load(file)
         lr_params = lr_model.best_params_
         lr_score = lr_model.best_score_
         lr_model = lr_model.best_estimator_
-    with open("XGB_model_race.mdl", mode='rb') as file:
+    with open("XGB_model_norace.mdl", mode='rb') as file:
         xg_model = pickle.load(file)
         xg_params = xg_model.best_params_
         xg_score = xg_model.best_score_
@@ -122,6 +122,7 @@ if __name__ == "__main__":
 
     race = "w/ demo. info."
     no_race = "no demo. info."
+    # obtained from runs but input manually
     roc_data = pd.DataFrame(np.array([[race, no_race, race, no_race],
                              ['LR', 'LR', 'GBDT', 'GBDT'],
                              [0.6665343127522853, 0.606300046323849, 0.683237376745405, 0.6430547283435737]]).T)
